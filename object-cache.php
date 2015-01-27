@@ -240,7 +240,7 @@ class WP_Object_Cache {
 			$value = $mc->get( $key );
 			if ( empty( $value ) || ( is_integer( $value ) && -1 == $value ) ){
 				$value = false;
-				$found = $m->getResultCode() !== Memcached::RES_NOTFOUND;
+				$found = $mc->getResultCode() !== Memcached::RES_NOTFOUND;
 			} else {
 				$found = true;
 			}
