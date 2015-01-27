@@ -2,7 +2,7 @@
 /*
 Plugin Name: Memcached Redux
 Description: The real Memcached (not Memcache) backend for the WP Object Cache.
-Version: 0.1.3.1
+Version: 0.1.3.2
 Plugin URI: http://wordpress.org/extend/plugins/memcached/
 Author: Scott Taylor - uses code from Ryan Boren, Denis de Bernardy, Matt Martz, Mike Schroder
 
@@ -226,21 +226,21 @@ class WP_Object_Cache {
 	function get( $id, $group = 'default', $force = false, &$found = null ) {
 		$key = $this->key( $id, $group );
 		$mc =& $this->get_mc( $group );
+		$found = false;
 
-		if ( isset( $this->cache[$key] ) ) {
+		if ( isset( $this->cache[$key] ) && ( !$force || in_array( $group, $this->no_mc_groups ) ) ) {
 			$found = true;
 			if ( is_object( $this->cache[$key] ) )
 				$value = clone $this->cache[$key];
 			else
 				$value = $this->cache[$key];
 		} else if ( in_array( $group, $this->no_mc_groups ) ) {
-			$found = false;
 			$this->cache[$key] = $value = false;
 		} else {
 			$value = $mc->get( $key );
 			if ( empty( $value ) || ( is_integer( $value ) && -1 == $value ) ){
 				$value = false;
-				$found = false;
+				$found = $m->getResultCode() !== Memcached::RES_NOTFOUND;
 			} else {
 				$found = true;
 			}
