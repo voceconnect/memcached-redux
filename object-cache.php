@@ -149,7 +149,7 @@ class WP_Object_Cache {
 		$result = $mc->add( $key, $data, $expire );
 
 		if ( false !== $result ) {
-			@ ++$this->stats['add'];
+			@++$this->stats['add'];
 			$this->group_ops[$group][] = "add $id";
 			$this->cache[$key] = $data;
 		}
@@ -203,7 +203,7 @@ class WP_Object_Cache {
 
 		$result = $mc->delete( $key );
 
-		@ ++$this->stats['delete'];
+		if ( isset( $this->stats['delete'] ) ) ++$this->stats['delete'];
 		$this->group_ops[$group][] = "delete $id";
 
 		if ( false !== $result )
@@ -247,7 +247,7 @@ class WP_Object_Cache {
 			$this->cache[$key] = $value;
 		}
 
-		@ ++$this->stats['get'];
+		if ( isset( $this->stats['get'] ) ) ++$this->stats['get'];
 		$this->group_ops[$group][] = "get $id";
 
 		if ( 'checkthedatabaseplease' === $value ) {
@@ -291,7 +291,7 @@ class WP_Object_Cache {
 			$return = array_merge( $return, $joined );
 		}
 
-		@ ++$this->stats['get_multi'];
+		@++$this->stats['get_multi'];
 		$this->group_ops[$group][] = "get_multi $id";
 		$this->cache = array_merge( $this->cache, $return );
 		return array_values( $return );
@@ -421,7 +421,7 @@ class WP_Object_Cache {
 		return $this->mc['default'];
 	}
 
-	function WP_Object_Cache() {
+	function __construct() {
 		global $memcached_servers;
 
 		if ( isset( $memcached_servers ) )
