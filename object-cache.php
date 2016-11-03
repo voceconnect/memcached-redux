@@ -149,7 +149,7 @@ class WP_Object_Cache {
 		$result = $mc->add( $key, $data, $expire );
 
 		if ( false !== $result ) {
-			@++$this->stats['add'];
+			if ( isset( $this->stats['add'] ) ) ++$this->stats['add'];
 			$this->group_ops[$group][] = "add $id";
 			$this->cache[$key] = $data;
 		}
@@ -291,7 +291,7 @@ class WP_Object_Cache {
 			$return = array_merge( $return, $joined );
 		}
 
-		@++$this->stats['get_multi'];
+		if ( isset( $this->stats['get_multi'] ) ) ++$this->stats['get_multi'];
 		$this->group_ops[$group][] = "get_multi $id";
 		$this->cache = array_merge( $this->cache, $return );
 		return array_values( $return );
